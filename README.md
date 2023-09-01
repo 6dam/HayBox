@@ -23,6 +23,7 @@ HayBox is a modular, cross-platform firmware for digital or mixed analog/digital
     * [Project M/Project+ mode](#project-mproject-mode)
   * [Input sources](#input-sources)
   * [Using the Pico's second core](#using-the-picos-second-core)
+  * [OLED Display](#oled-display)
 * [Troubleshooting](#troubleshooting)
 * [Contributing](#contributing)
 * [Contributors](#contributors)
@@ -425,6 +426,12 @@ void loop1() {
 The `while` loop makes sure we wait until `setup()` on core0 has finished setting up the communication backends. We then create a GameCube controller input source with a polling rate of 2500Hz. We also run it on `pio1` as an easy way to avoid interfering with any GameCube/N64 backends, which use `pio0` unless otherwise specified. In `loop1()` we make the assumption that the primary backend is the first element of the `backends` array (which is configured in the same file anyway, so we aren't truly assuming anything we don't know) and directly scan the GameCube controller inputs into the backend's input state.
 
 As a slightly crazier hypothetical example, one could even power all the controls for a two person arcade cabinet using a single Pico by creating two switch matrix input sources using say 10 pins each, and two GameCube backends, both on separate cores. The possibilities are endless.
+
+### OLED Display
+
+![image](img/OLED_pico_wiring_guide.png)
+
+A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp`.
 
 ## Troubleshooting
 
