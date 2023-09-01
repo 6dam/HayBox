@@ -281,12 +281,12 @@ void loop1() {
     strcpy(char_statusBar, statusBar.c_str()); //convert string to char
     obdWriteString(&obd, 0, 0, 0, char_statusBar, FONT_6x8, 0, 0);
     
-    // Counter displayed in bottom left for troubleshooting text timeout.
-    counter += 1;
-    std::string strCounter = std::to_string(counter);
-    char * char_strCounter = new char[strCounter.length() + 1];
-    strcpy(char_strCounter, strCounter.c_str());
-    obdWriteString(&obd, 0, 0, 7, char_strCounter, FONT_6x8, 0, 0);
+    // Counter displayed in bottom left for troubleshooting text timeout. Text always disappears after counter reached 4414.
+    //counter += 1;
+    //std::string strCounter = std::to_string(counter);
+    //char * char_strCounter = new char[strCounter.length() + 1];
+    //strcpy(char_strCounter, strCounter.c_str());
+    //obdWriteString(&obd, 0, 0, 7, char_strCounter, FONT_6x8, 0, 0);
 
     // Draw buttons.
     obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
