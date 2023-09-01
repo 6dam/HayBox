@@ -431,7 +431,7 @@ As a slightly crazier hypothetical example, one could even power all the control
 
 ![image](img/OLED_pico_wiring_guide.png)
 
-A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp`.
+A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp`. Note: for some reason, the text disappears after 2 minutes or so.
 
 ## Troubleshooting
 
