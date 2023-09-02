@@ -247,7 +247,7 @@ void setup1() {
         obdFill(&obd, 0, 1);
 }
 
-int counter = 0;
+//int counter = 0; // Counter displayed in bottom left for troubleshooting text timeout. Text always disappears after counter reached 4414.
 
 void loop1() {
     if (backends != nullptr) {
