@@ -24,7 +24,7 @@
 #include <string>
 #include <cstring>
 std::string dispCommBackend = "BACKEND";
-std::string dispMode = "           MODE";
+std::string dispMode = "          MODE";
 std::string statusBar;
 
 CommunicationBackend **backends = nullptr;
@@ -107,6 +107,7 @@ void setup() {
             // Default to Ultimate mode on Switch.
             primary_backend->SetGameMode(new Ultimate(socd::SOCD_2IP));
             return;
+            //dispMode = "            ULT";
         } else if (button_holds.z) {
             // If no console detected and Z is held on plugin then use DInput backend.
             TUGamepad::registerDescriptor();
