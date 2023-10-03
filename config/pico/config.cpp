@@ -24,8 +24,7 @@
 #include <string>
 #include <cstring>
 std::string dispCommBackend = "BACKEND";
-std::string dispMode = "          MODE";
-std::string statusBar;
+std::string dispMode = "MODE";
 
 CommunicationBackend **backends = nullptr;
 size_t backend_count;
@@ -106,8 +105,8 @@ void setup() {
 
             // Default to Ultimate mode on Switch.
             primary_backend->SetGameMode(new Ultimate(socd::SOCD_2IP));
+            dispMode = "ULT";
             return;
-            dispMode = "            ULT";
         } else if (button_holds.z) {
             // If no console detected and Z is held on plugin then use DInput backend.
             TUGamepad::registerDescriptor();
@@ -147,7 +146,7 @@ void setup() {
     primary_backend->SetGameMode(
         new Melee20Button(socd::SOCD_2IP_NO_REAC, { .crouch_walk_os = false })
     );
-    dispMode = "          MELEE";
+    dispMode = "MELEE";
 }
 
 void loop() {
@@ -220,7 +219,6 @@ NunchukInput *nunchuk = nullptr;
 OBDISP obd;
 uint8_t ucBackBuffer[1024];
 
-
 void setup1() {
     while (backends == nullptr) {
         tight_loop_contents();
@@ -258,27 +256,30 @@ void loop1() {
     obdFill(&obd, 0, 0);
 
     //Set mode string based on input combination.
-    if (backends[0]->GetInputs().mod_x == true && backends[0]->GetInputs().mod_y == false && backends[0]->GetInputs().start == true) {
+    if (backends[0]->GetInputs().mod_x && !backends[0]->GetInputs().mod_y && backends[0]->GetInputs().start) {
         if (backends[0]->GetInputs().l) {
-            dispMode = "          MELEE";
+            dispMode = "MELEE";
         } else if (backends[0]->GetInputs().left) {
-            dispMode = "             PM";
+            dispMode = "PM";
         } else if (backends[0]->GetInputs().down) {
-            dispMode = "            ULT";
+            dispMode = "ULT";
         } else if (backends[0]->GetInputs().right) {
-            dispMode = "            FGC";
+            dispMode = "FGC";
         } else if (backends[0]->GetInputs().b) {
-            dispMode = "            RoA";
+            dispMode = "RoA";
         }
     }
-    
-    // Combine communications backed and mode into one status bar.
-    statusBar = dispCommBackend + dispMode;
 
-    // Write statusbar to OLED starting in the top left.
-    char char_statusBar[statusBar.length() + 1];
-    strcpy(char_statusBar, statusBar.c_str()); //convert string to char
-    obdWriteString(&obd, 0, 0, 0, char_statusBar, FONT_6x8, 0, 0);
+    // Write communication backend to OLED starting in the top left.
+    char char_dispCommBackend[dispCommBackend.length() + 1];
+    strcpy(char_dispCommBackend, dispCommBackend.c_str()); //convert string to char
+    obdWriteString(&obd, 0, 0, 0, char_dispCommBackend, FONT_6x8, 0, 0);
+
+    // Write current mode to OLED in the top right. 
+    //For the x position of the string, we are subtracting the max position (128 for a 128x64 px display) by the number of characters * the font width in px.
+    char char_dispMode[dispMode.length() + 1];
+    strcpy(char_dispMode, dispMode.c_str()); //convert string to char
+    obdWriteString(&obd, 0, 128-(dispMode.length() * 6), 0, char_dispMode, FONT_6x8, 0, 0);
 
     // Draw buttons.
     obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
