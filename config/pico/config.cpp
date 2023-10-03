@@ -102,12 +102,12 @@ void setup() {
             backend_count = 1;
             primary_backend = new NintendoSwitchBackend(input_sources, input_source_count);
             backends = new CommunicationBackend *[backend_count] { primary_backend };
-            //dispCommBackend = "SWITCH"; //Display isn't working properly when holding X on plugin.
+            dispCommBackend = "SWITCH"; //Display isn't refreshing properly when holding X on plugin.
 
             // Default to Ultimate mode on Switch.
             primary_backend->SetGameMode(new Ultimate(socd::SOCD_2IP));
             return;
-            //dispMode = "            ULT";
+            dispMode = "            ULT";
         } else if (button_holds.z) {
             // If no console detected and Z is held on plugin then use DInput backend.
             TUGamepad::registerDescriptor();
@@ -248,8 +248,6 @@ void setup1() {
         obdFill(&obd, 0, 1);
 }
 
-//int counter = 0; // Counter displayed in bottom left for troubleshooting text timeout. Text always disappears after counter reached 4414.
-
 void loop1() {
     if (backends != nullptr) {
         nunchuk->UpdateInputs(backends[0]->GetInputs());
@@ -259,7 +257,7 @@ void loop1() {
     //Clear screen but don't send to render yet.
     obdFill(&obd, 0, 0);
 
-    //Set mode string based on input combination. Couldn't figure out how to read the current mode, that'd be better.
+    //Set mode string based on input combination.
     if (backends[0]->GetInputs().mod_x == true && backends[0]->GetInputs().mod_y == false && backends[0]->GetInputs().start == true) {
         if (backends[0]->GetInputs().l) {
             dispMode = "          MELEE";
@@ -277,17 +275,10 @@ void loop1() {
     // Combine communications backed and mode into one status bar.
     statusBar = dispCommBackend + dispMode;
 
-    // Write statusbar to OLED starting in the top left. For some reason disappears after 4414 loops? No idea why. Works fine until that point.
-    char * char_statusBar = new char[statusBar.length() + 1];
+    // Write statusbar to OLED starting in the top left.
+    char char_statusBar[statusBar.length() + 1];
     strcpy(char_statusBar, statusBar.c_str()); //convert string to char
     obdWriteString(&obd, 0, 0, 0, char_statusBar, FONT_6x8, 0, 0);
-    
-    // Counter displayed in bottom left for troubleshooting text timeout. Text always disappears after counter reached 4414.
-    //counter += 1;
-    //std::string strCounter = std::to_string(counter);
-    //char * char_strCounter = new char[strCounter.length() + 1];
-    //strcpy(char_strCounter, strCounter.c_str());
-    //obdWriteString(&obd, 0, 0, 7, char_strCounter, FONT_6x8, 0, 0);
 
     // Draw buttons.
     obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
