@@ -101,7 +101,7 @@ void setup() {
             backend_count = 1;
             primary_backend = new NintendoSwitchBackend(input_sources, input_source_count);
             backends = new CommunicationBackend *[backend_count] { primary_backend };
-            dispCommBackend = "SWITCH"; //Display isn't refreshing properly when holding X on plugin.
+            dispCommBackend = "SWITCH"; //Display isn't refreshing properly when holding X on plugin and connecting to PC. When connecting to switch, weird behavior from OLED display.
 
             // Default to Ultimate mode on Switch.
             primary_backend->SetGameMode(new Ultimate(socd::SOCD_2IP));
@@ -131,10 +131,10 @@ void setup() {
         if (console == ConnectedConsole::GAMECUBE) {
             primary_backend =
                 new GamecubeBackend(input_sources, input_source_count, pinout.joybus_data);
-            dispCommBackend = "GCN"; // Not yet tested.
+            dispCommBackend = "GCN";
         } else if (console == ConnectedConsole::N64) {
             primary_backend = new N64Backend(input_sources, input_source_count, pinout.joybus_data);
-            dispCommBackend = "N64"; // Not yet tested.
+            dispCommBackend = "N64";
         }
 
         // If console then only using 1 backend (no input viewer).
@@ -171,15 +171,15 @@ NunchukInput *nunchuk = nullptr;
 #endif
 
 #ifndef I2C_SDA_PIN
-#define I2C_SDA_PIN 10 //Set depending on what you hook up your display to.
+#define I2C_SDA_PIN 10 //Corresponds to GPIO pin connected to OLED display's SDA pin.
 #endif
 
 #ifndef I2C_SCL_PIN
-#define I2C_SCL_PIN 11 //Set depending on what you hook up your display to.
+#define I2C_SCL_PIN 11 //Corresponds to GPIO pin connected to OLED display's SCL pin.
 #endif
 
 #ifndef I2C_BLOCK
-#define I2C_BLOCK i2c1 //Set depending on which pins selected.
+#define I2C_BLOCK i2c1 //Set depending on which pair of pins you are using - see below.
 #endif
 
 //SDA Pin,SCL Pin,I2C Block
@@ -276,7 +276,7 @@ void loop1() {
     obdWriteString(&obd, 0, 0, 0, char_dispCommBackend, FONT_6x8, 0, 0);
 
     // Write current mode to OLED in the top right. 
-    //For the x position of the string, we are subtracting the max position (128 for a 128x64 px display) by the number of characters * the font width in px.
+    // For the x position of the string, we are subtracting the max position (128 for a 128x64 px display) by the number of characters * the font width in px.
     char char_dispMode[dispMode.length() + 1];
     strcpy(char_dispMode, dispMode.c_str()); //convert string to char
     obdWriteString(&obd, 0, 128-(dispMode.length() * 6), 0, char_dispMode, FONT_6x8, 0, 0);
