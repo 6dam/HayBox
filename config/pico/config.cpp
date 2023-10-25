@@ -197,7 +197,7 @@ NunchukInput *nunchuk = nullptr;
 //26,27,i2c1
 
 #ifndef I2C_SPEED
-#define I2C_SPEED 800000 //Common values are 100000 for standard, 400000 for fast and 800000 ludicrous speed.
+#define I2C_SPEED 400000 //Common values are 100000 for standard, 400000 for fast and 800000 ludicrous speed.
 #endif
 
 #ifndef DISPLAY_SIZE
