@@ -25,6 +25,9 @@
 #include <cstring>
 std::string dispCommBackend = "BACKEND";
 std::string dispMode = "MODE";
+std::string leftLayout;
+std::string centerLayout;
+std::string rightLayout;
 
 CommunicationBackend **backends = nullptr;
 size_t backend_count;
@@ -101,7 +104,7 @@ void setup() {
             backend_count = 1;
             primary_backend = new NintendoSwitchBackend(input_sources, input_source_count);
             backends = new CommunicationBackend *[backend_count] { primary_backend };
-            dispCommBackend = "SWITCH"; //Display isn't refreshing properly when holding X on plugin and connecting to PC. When connecting to switch, weird behavior from OLED display.
+            dispCommBackend = "SWITCH"; //Display isn't refreshing properly when holding X on plugin and connecting to PC.
 
             // Default to Ultimate mode on Switch.
             primary_backend->SetGameMode(new Ultimate(socd::SOCD_2IP));
@@ -171,15 +174,15 @@ NunchukInput *nunchuk = nullptr;
 #endif
 
 #ifndef I2C_SDA_PIN
-#define I2C_SDA_PIN 10 //Corresponds to GPIO pin connected to OLED display's SDA pin.
+#define I2C_SDA_PIN 8 //Corresponds to GPIO pin connected to OLED display's SDA pin.
 #endif
 
 #ifndef I2C_SCL_PIN
-#define I2C_SCL_PIN 11 //Corresponds to GPIO pin connected to OLED display's SCL pin.
+#define I2C_SCL_PIN 9 //Corresponds to GPIO pin connected to OLED display's SCL pin.
 #endif
 
 #ifndef I2C_BLOCK
-#define I2C_BLOCK i2c1 //Set depending on which pair of pins you are using - see below.
+#define I2C_BLOCK i2c0 //Set depending on which pair of pins you are using - see below.
 #endif
 
 //SDA Pin,SCL Pin,I2C Block
@@ -201,7 +204,7 @@ NunchukInput *nunchuk = nullptr;
 #endif
 
 #ifndef DISPLAY_SIZE
-#define DISPLAY_SIZE OLED_128x64 //Can be changed to match different displays.
+#define DISPLAY_SIZE OLED_128x64 
 #endif
 
 #ifndef DISPLAY_FLIP
@@ -240,6 +243,10 @@ void setup1() {
         -1,
 		I2C_SPEED);
 
+        //Configure display layout options. Change the strings below to make a selection.
+        leftLayout = "circles"; // circles, circlesWASD, squares, squaresWASD, htangl
+        centerLayout = "circles"; // circles, circles3Button, squares, squares3Button, htangl
+        rightLayout = "circles"; // circles, squares, circles19Button, squares19Button, htangl
         
 	    obdSetBackBuffer(&obd, ucBackBuffer);
         //Clear screen and render.
@@ -282,26 +289,145 @@ void loop1() {
     obdWriteString(&obd, 0, 128-(dispMode.length() * 6), 0, char_dispMode, FONT_6x8, 0, 0);
 
     // Draw buttons.
-    obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
-    obdPreciseEllipse(&obd, 15, 23, 4, 4, 1, backends[0]->GetInputs().left);
-    obdPreciseEllipse(&obd, 25, 22, 4, 4, 1, backends[0]->GetInputs().down);
-    obdPreciseEllipse(&obd, 35, 27, 4, 4, 1, backends[0]->GetInputs().right);
-    obdPreciseEllipse(&obd, 38, 51, 4, 4, 1, backends[0]->GetInputs().mod_x);
-    obdPreciseEllipse(&obd, 46, 57, 4, 4, 1, backends[0]->GetInputs().mod_y);
-    obdPreciseEllipse(&obd, 64, 27, 4, 4, 1, backends[0]->GetInputs().start);
-    obdPreciseEllipse(&obd, 82,  46, 4, 4, 1, backends[0]->GetInputs().c_left);
-    obdPreciseEllipse(&obd, 82,  57, 4, 4, 1, backends[0]->GetInputs().c_down);
-    obdPreciseEllipse(&obd, 90,  40, 4, 4, 1, backends[0]->GetInputs().c_up);
-    obdPreciseEllipse(&obd, 90,  52, 4, 4, 1, backends[0]->GetInputs().a);
-    obdPreciseEllipse(&obd, 99,  46, 4, 4, 1, backends[0]->GetInputs().c_right);
-    obdPreciseEllipse(&obd, 93, 17, 4, 4, 1, backends[0]->GetInputs().r);
-    obdPreciseEllipse(&obd, 93,  27, 4, 4, 1, backends[0]->GetInputs().b);
-    obdPreciseEllipse(&obd, 103, 13, 4, 4, 1, backends[0]->GetInputs().y);
-    obdPreciseEllipse(&obd, 102, 23, 4, 4, 1, backends[0]->GetInputs().x);
-    obdPreciseEllipse(&obd, 113, 14, 4, 4, 1, backends[0]->GetInputs().lightshield);
-    obdPreciseEllipse(&obd, 112, 24, 4, 4, 1, backends[0]->GetInputs().z);
-    obdPreciseEllipse(&obd, 122, 19, 4, 4, 1, backends[0]->GetInputs().midshield);
-    obdPreciseEllipse(&obd, 122, 29, 4, 4, 1, backends[0]->GetInputs().up);
+
+    if (leftLayout == "circles")
+    {
+        obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
+        obdPreciseEllipse(&obd, 15, 23, 4, 4, 1, backends[0]->GetInputs().left);
+        obdPreciseEllipse(&obd, 25, 22, 4, 4, 1, backends[0]->GetInputs().down);
+        obdPreciseEllipse(&obd, 35, 27, 4, 4, 1, backends[0]->GetInputs().right);
+        obdPreciseEllipse(&obd, 38, 52, 4, 4, 1, backends[0]->GetInputs().mod_x);
+        obdPreciseEllipse(&obd, 46, 58, 4, 4, 1, backends[0]->GetInputs().mod_y);
+    } else if (leftLayout == "squares")
+    {
+        obdRectangle(&obd,3,26,9,32,1, backends[0]->GetInputs().l);
+        obdRectangle(&obd,12,20,18,26,1, backends[0]->GetInputs().left);
+        obdRectangle(&obd,22,19,28,25,1, backends[0]->GetInputs().down);
+        obdRectangle(&obd,32,24,38,30,1, backends[0]->GetInputs().right);
+        obdRectangle(&obd,35,49,41,55,1, backends[0]->GetInputs().mod_x);
+        obdRectangle(&obd,43,55,49,61,1, backends[0]->GetInputs().mod_y);
+    }else if (leftLayout == "circlesWASD")
+    {
+        obdPreciseEllipse(&obd, 6,  29, 4, 4, 1, backends[0]->GetInputs().l);
+        obdPreciseEllipse(&obd, 15, 23, 4, 4, 1, backends[0]->GetInputs().left);
+        obdPreciseEllipse(&obd, 25, 22, 4, 4, 1, backends[0]->GetInputs().down);
+        obdPreciseEllipse(&obd, 29, 13, 4, 4, 1, backends[0]->GetInputs().up);
+        obdPreciseEllipse(&obd, 35, 27, 4, 4, 1, backends[0]->GetInputs().right);
+        obdPreciseEllipse(&obd, 38, 52, 4, 4, 1, backends[0]->GetInputs().mod_x);
+        obdPreciseEllipse(&obd, 46, 58, 4, 4, 1, backends[0]->GetInputs().mod_y);
+    }else if (leftLayout == "squaresWASD")
+    {
+        obdRectangle(&obd,3,26,9,32,1, backends[0]->GetInputs().l);
+        obdRectangle(&obd,12,20,18,26,1, backends[0]->GetInputs().left);
+        obdRectangle(&obd,22,19,28,25,1, backends[0]->GetInputs().down);
+        obdRectangle(&obd,32,24,38,30,1, backends[0]->GetInputs().right);
+        obdRectangle(&obd,26,10,32,16,1, backends[0]->GetInputs().up);
+        obdRectangle(&obd,35,49,41,55,1, backends[0]->GetInputs().mod_x);
+        obdRectangle(&obd,43,55,49,61,1, backends[0]->GetInputs().mod_y);
+    }else if (leftLayout == "htangl"){
+        obdRectangle(&obd,3,26,9,32,1, backends[0]->GetInputs().l);
+        obdRectangle(&obd,12,20,18,26,1, backends[0]->GetInputs().left);
+        obdRectangle(&obd,22,19,28,25,1, backends[0]->GetInputs().down);
+        obdRectangle(&obd,32,24,38,30,1, backends[0]->GetInputs().right);
+        obdRectangle(&obd,35,49,41,55,1, backends[0]->GetInputs().mod_x);
+        obdRectangle(&obd,41,55,47,61,1, backends[0]->GetInputs().mod_y);
+    };
+    
+    if (centerLayout == "circles")
+    {
+        obdPreciseEllipse(&obd, 64, 27, 4, 4, 1, backends[0]->GetInputs().start);
+    }else if (centerLayout == "circles3Button")
+    {
+        obdPreciseEllipse(&obd, 64, 27, 4, 4, 1, backends[0]->GetInputs().start);
+        obdPreciseEllipse(&obd, 54, 27, 4, 4, 1, backends[0]->GetInputs().select);
+        obdPreciseEllipse(&obd, 74, 27, 4, 4, 1, backends[0]->GetInputs().home);
+    }else if (centerLayout == "squares")
+    {
+        obdRectangle(&obd,61,24,67,30,1, backends[0]->GetInputs().start);
+    }else if (centerLayout == "squares3Button")
+    {
+        obdRectangle(&obd,61,24,67,30,1, backends[0]->GetInputs().start);
+        obdRectangle(&obd,51,24,57,30,1, backends[0]->GetInputs().select);
+        obdRectangle(&obd,71,24,77,30,1, backends[0]->GetInputs().home);
+    }else if (centerLayout == "htangl"){
+        obdRectangle(&obd,50,32,56,38,1, backends[0]->GetInputs().select);
+        obdRectangle(&obd,61,32,67,38,1, backends[0]->GetInputs().start);
+        obdRectangle(&obd,72,32,78,38,1, backends[0]->GetInputs().home);
+    };
+    
+    if (rightLayout == "circles")
+    {
+        obdPreciseEllipse(&obd, 82,  46, 4, 4, 1, backends[0]->GetInputs().c_left);
+        obdPreciseEllipse(&obd, 82,  58, 4, 4, 1, backends[0]->GetInputs().c_down);
+        obdPreciseEllipse(&obd, 90,  40, 4, 4, 1, backends[0]->GetInputs().c_up);
+        obdPreciseEllipse(&obd, 90,  52, 4, 4, 1, backends[0]->GetInputs().a);
+        obdPreciseEllipse(&obd, 98,  46, 4, 4, 1, backends[0]->GetInputs().c_right);
+        obdPreciseEllipse(&obd, 93, 17, 4, 4, 1, backends[0]->GetInputs().r);
+        obdPreciseEllipse(&obd, 93,  27, 4, 4, 1, backends[0]->GetInputs().b);
+        obdPreciseEllipse(&obd, 103, 13, 4, 4, 1, backends[0]->GetInputs().y);
+        obdPreciseEllipse(&obd, 102, 23, 4, 4, 1, backends[0]->GetInputs().x);
+        obdPreciseEllipse(&obd, 113, 14, 4, 4, 1, backends[0]->GetInputs().lightshield);
+        obdPreciseEllipse(&obd, 112, 24, 4, 4, 1, backends[0]->GetInputs().z);
+        obdPreciseEllipse(&obd, 122, 19, 4, 4, 1, backends[0]->GetInputs().midshield);
+        obdPreciseEllipse(&obd, 122, 29, 4, 4, 1, backends[0]->GetInputs().up);
+    }else if (rightLayout == "squares")
+    {
+        obdRectangle(&obd,79,43,85,49,1, backends[0]->GetInputs().c_left);
+        obdRectangle(&obd,79,55,85,61,1, backends[0]->GetInputs().c_down);
+        obdRectangle(&obd,87,37,93,43,1, backends[0]->GetInputs().c_up);
+        obdRectangle(&obd,87,49,93,55,1, backends[0]->GetInputs().a);
+        obdRectangle(&obd,95,43,101,49,1, backends[0]->GetInputs().c_right);
+        obdRectangle(&obd,90,14,96,20,1, backends[0]->GetInputs().r);
+        obdRectangle(&obd,90,24,96,30,1, backends[0]->GetInputs().b);
+        obdRectangle(&obd,100,10,106,16,1, backends[0]->GetInputs().y);
+        obdRectangle(&obd,99,20,105,26,1, backends[0]->GetInputs().x);
+        obdRectangle(&obd,110,11,116,17,1, backends[0]->GetInputs().lightshield);
+        obdRectangle(&obd,109,21,115,27,1, backends[0]->GetInputs().z);
+        obdRectangle(&obd,119,16,125,22,1, backends[0]->GetInputs().midshield);
+        obdRectangle(&obd,119,26,125,32,1, backends[0]->GetInputs().up);
+    }else if (rightLayout == "circles19Button")
+    {
+        obdPreciseEllipse(&obd, 82,  46, 4, 4, 1, backends[0]->GetInputs().c_left);
+        obdPreciseEllipse(&obd, 82,  58, 4, 4, 1, backends[0]->GetInputs().c_down);
+        obdPreciseEllipse(&obd, 90,  40, 4, 4, 1, backends[0]->GetInputs().c_up);
+        obdPreciseEllipse(&obd, 90,  52, 4, 4, 1, backends[0]->GetInputs().a);
+        obdPreciseEllipse(&obd, 98,  46, 4, 4, 1, backends[0]->GetInputs().c_right);
+        obdPreciseEllipse(&obd, 93, 17, 4, 4, 1, backends[0]->GetInputs().r);
+        obdPreciseEllipse(&obd, 93,  27, 4, 4, 1, backends[0]->GetInputs().b);
+        obdPreciseEllipse(&obd, 103, 13, 4, 4, 1, backends[0]->GetInputs().y);
+        obdPreciseEllipse(&obd, 102, 23, 4, 4, 1, backends[0]->GetInputs().x);
+        obdPreciseEllipse(&obd, 113, 14, 4, 4, 1, backends[0]->GetInputs().lightshield);
+        obdPreciseEllipse(&obd, 112, 24, 4, 4, 1, backends[0]->GetInputs().z);
+        obdPreciseEllipse(&obd, 122, 29, 4, 4, 1, backends[0]->GetInputs().up);
+    }else if (rightLayout == "squares19Button")
+    {
+        obdRectangle(&obd,79,43,85,49,1, backends[0]->GetInputs().c_left);
+        obdRectangle(&obd,79,55,85,61,1, backends[0]->GetInputs().c_down);
+        obdRectangle(&obd,87,37,93,43,1, backends[0]->GetInputs().c_up);
+        obdRectangle(&obd,87,49,93,55,1, backends[0]->GetInputs().a);
+        obdRectangle(&obd,95,43,101,49,1, backends[0]->GetInputs().c_right);
+        obdRectangle(&obd,90,14,96,20,1, backends[0]->GetInputs().r);
+        obdRectangle(&obd,90,24,96,30,1, backends[0]->GetInputs().b);
+        obdRectangle(&obd,100,10,106,16,1, backends[0]->GetInputs().y);
+        obdRectangle(&obd,99,20,105,26,1, backends[0]->GetInputs().x);
+        obdRectangle(&obd,110,11,116,17,1, backends[0]->GetInputs().lightshield);
+        obdRectangle(&obd,109,21,115,27,1, backends[0]->GetInputs().z);
+        obdRectangle(&obd,119,26,125,32,1, backends[0]->GetInputs().up);
+    }else if (rightLayout == "htangl"){
+        obdRectangle(&obd,89,23,95,29,1, backends[0]->GetInputs().b);
+        obdRectangle(&obd,99,18,105,24,1, backends[0]->GetInputs().x);
+        obdRectangle(&obd,109,19,115,25,1, backends[0]->GetInputs().z);
+        obdRectangle(&obd,119,26,125,32,1, backends[0]->GetInputs().up);
+        obdRectangle(&obd,89,31,95,37,1, backends[0]->GetInputs().r);
+        obdRectangle(&obd,99,26,105,32,1, backends[0]->GetInputs().y);
+        obdRectangle(&obd,109,27,115,33,1, backends[0]->GetInputs().lightshield);
+        obdRectangle(&obd,119,34,125,40,1, backends[0]->GetInputs().midshield);
+        obdRectangle(&obd,88,40,94,46,1, backends[0]->GetInputs().c_up);
+        obdRectangle(&obd,80,45,86,51,1, backends[0]->GetInputs().c_left);
+        obdRectangle(&obd,80,55,86,61,1, backends[0]->GetInputs().c_down);
+        obdRectangle(&obd,88,49,94,55,1, backends[0]->GetInputs().a);
+        obdRectangle(&obd,96,45,102,51,1, backends[0]->GetInputs().c_right);
+    };
 
     obdDumpBuffer(&obd,NULL); //Sends buffered content to display.
 }

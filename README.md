@@ -463,9 +463,13 @@ As a slightly crazier hypothetical example, one could even power all the control
 
 ![image](img/OLED_pico_wiring_guide.png)
 
-A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp` and the added libraries. Note: The display does not refresh when booting into the Switch communication backend. Looking into fixing this.
+A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp` and the added libraries(`/lib/BitBang_I2C` and `/lib/OneBitDisplay`).
 
-Reference the pinout chart below if considering using a different set of sequential pins for SDA/SCL. i2c0 or i2c1 must be set in the config depending on which two pins you select. (i.e. pins 10 and 11 are set by default, so i2c1 is selected.)
+Display options may be configured within the `setup1()` loop of `/config/pico/config.cpp`. Change the `leftLayout`, `centerLayout`, and `rightLayout` variables to match your desired option prior to compiling. Options include circular/square buttons, WASD, 19-button, htangl, etc. By default, the options are set to display a 20-button layout with circles.
+
+Bug: Display does not refresh properly when connecting to PC via usb while using the Switch communication backend. All other modes/communication backends confirmed to work properly.
+
+Reference the pinout chart below if considering using a different set of sequential pins for SDA/SCL. i2c0 or i2c1 must be set in the config depending on which two pins you select. (i.e. pins 8 and 9 are set by default, so i2c0 is selected.)
 
 ![image](img/Raspberry_pi_pico_w_pinout.png)
 
