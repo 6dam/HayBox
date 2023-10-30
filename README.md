@@ -471,7 +471,7 @@ Bug: Display does not refresh properly when connecting to PC via usb while using
 
 Reference the pinout chart below if considering using a different set of sequential pins for SDA/SCL. i2c0 or i2c1 must be set in the config depending on which two pins you select. (i.e. pins 8 and 9 are set by default, so i2c0 is selected.)
 
-![image](img/Raspberry_pi_pico_w_pinout.png)
+![image](img/Raspberry_pi_pico_pinout.png)
 
 ## Troubleshooting
 
