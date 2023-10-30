@@ -463,7 +463,7 @@ As a slightly crazier hypothetical example, one could even power all the control
 
 ![image](img/OLED_pico_wiring_guide.png)
 
-A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. The code is contained to `/config/pico/config.cpp` and the added libraries(`/lib/BitBang_I2C` and `/lib/OneBitDisplay`).
+A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to display an input viewer as well as the current communication backend and mode. (SSD1306, SH1106, SSD1312, SSD1309, etc.) The code is contained to `/config/pico/config.cpp` and the added libraries(`/lib/BitBang_I2C` and `/lib/OneBitDisplay`).
 
 Display options may be configured within the `setup1()` loop of `/config/pico/config.cpp`. Change the `leftLayout`, `centerLayout`, and `rightLayout` variables to match your desired option prior to compiling. Options include circular/square buttons, WASD, 19-button, htangl, etc. By default, the options are set to display a 20-button layout with circles.
 
