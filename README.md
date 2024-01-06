@@ -473,6 +473,8 @@ Reference the pinout chart below if considering using a different set of sequent
 
 ![image](img/Raspberry_pi_pico_pinout.png)
 
+This was an attempt to port over a version of what the GP2040-CE team has done with their OLED display feature - huge shout out to them for their work on that firmware. Thank you to Gadget in the Crane's Lab Discord for helping me get started with implementing display code into Haybox, and Haystack for helping me out with implementation questions I ran into while trying to get this working in Haybox.
+
 ## Troubleshooting
 
 ### Controller not working with console or GameCube adapter
