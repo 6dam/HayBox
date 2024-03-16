@@ -469,7 +469,7 @@ A 128x64 OLED display can be connected to the Raspberry Pi Pico in order to disp
 
 Display options may be configured within the `setup1()` loop of `/config/pico/config.cpp`. Change the `leftLayout`, `centerLayout`, and `rightLayout` variables to match your desired option prior to compiling. Options include circular/square buttons, WASD, 19-button, htangl, etc. By default, the options are set to display a 20-button layout with circles.
 
-Bug: Display does not refresh properly when connecting to PC via usb while using the Switch communication backend. All other modes/communication backends confirmed to work properly.
+Bugs: Display does not refresh properly when connecting to PC via usb while using the Switch communication backend. Additionally, there appear to be issues with the display when connected to N64. All other modes/communication backends confirmed to work properly.
 
 Reference the pinout chart below if considering using a different set of sequential pins for SDA/SCL. i2c0 or i2c1 must be set in the config depending on which two pins you select. (i.e. pins 8 and 9 are set by default, so i2c0 is selected.)
 
